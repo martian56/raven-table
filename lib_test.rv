@@ -1,0 +1,32 @@
+import std/string
+import std/test { assert_eq_str, assert_true }
+import "./lib" { Table }
+
+fun test_plain_render() {
+    let t = Table.new(["Name", "Age"]).plain()
+    t.row(["Alice", "30"])
+    t.row(["Bob", "5"])
+    let expected = "Name   Age\n-----  ---\nAlice  30\nBob    5"
+    assert_eq_str(t.render(), expected)
+}
+
+fun test_colored_header_has_bold() {
+    let t = Table.new(["A", "B"])
+    t.row(["1", "2"])
+    let out = t.render()
+    assert_true(out.contains("\u{1b}[1m"))
+    assert_true(out.contains("\u{1b}[0m"))
+}
+
+fun test_widths_grow_to_data() {
+    let t = Table.new(["X"]).plain()
+    t.row(["longvalue"])
+    assert_true(t.render().contains("---------"))
+}
+
+fun test_ragged_row_is_padded() {
+    let t = Table.new(["A", "B", "C"]).plain()
+    t.row(["1", "2"])
+    let out = t.render()
+    assert_eq_str(out, "A  B  C\n-  -  -\n1  2")
+}

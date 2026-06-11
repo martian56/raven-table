@@ -1,0 +1,122 @@
+// raven-table: render rows as an aligned text table.
+//
+//     import "github.com/martian56/raven-table" { Table }
+//
+//     let t = Table.new(["Name", "Age", "City"])
+//     t.row(["Alice", "30", "New York"])
+//     t.row(["Bob", "25", "Boston"])
+//     print(t.render())
+//
+// Columns are sized to their widest cell. The header is bold by default (via
+// raven-color); call `.plain()` for output without escapes, which is what you
+// want for a file or a pipe.
+
+import std/string
+import "github.com/martian56/raven-color" { Style }
+
+struct Table {
+    headers: List<String>,
+    rows: List<List<String>>,
+    colored: Bool,
+}
+
+impl Table {
+    // A table with the given column headers, colored output on.
+    fun new(headers: List<String>) -> Table {
+        let r: List<List<String>> = []
+        return Table { headers, rows: r, colored: true }
+    }
+
+    // A copy that renders without color (no escape codes).
+    fun plain(self) -> Table {
+        return Table { headers: self.headers, rows: self.rows, colored: false }
+    }
+
+    // Append a row. Short rows are padded with empty cells when rendered.
+    fun row(self, cells: List<String>) -> Table {
+        self.rows.push(cells)
+        return self
+    }
+
+    // Render the table to a string: a bold header, a dashed rule, then the rows.
+    fun render(self) -> String {
+        let cols = self.headers.len()
+        let widths: List<Int> = []
+        let c = 0
+        while c < cols {
+            widths.push(self.headers[c].length())
+            c += 1
+        }
+        let r = 0
+        while r < self.rows.len() {
+            let j = 0
+            while j < cols {
+                let w = _cell(self.rows[r], j).length()
+                if w > widths[j] {
+                    widths[j] = w
+                }
+                j += 1
+            }
+            r += 1
+        }
+
+        let header = _format_row(self.headers, widths)
+        if self.colored {
+            header = Style.new().bold().apply(header)
+        }
+
+        let rule_cells: List<String> = []
+        let k = 0
+        while k < cols {
+            rule_cells.push("-".repeat(widths[k]))
+            k += 1
+        }
+        let out = "${header}\n${_format_row(rule_cells, widths)}"
+
+        let i = 0
+        while i < self.rows.len() {
+            out = "${out}\n${_format_row(self.rows[i], widths)}"
+            i += 1
+        }
+        return out
+    }
+}
+
+// The cell at column `j`, or "" when the row is short.
+fun _cell(row: List<String>, j: Int) -> String {
+    if j < row.len() {
+        return row[j]
+    }
+    return ""
+}
+
+// Join `cells` padded to `widths`, two spaces between columns. The last column
+// is not padded, so lines carry no trailing whitespace.
+fun _format_row(cells: List<String>, widths: List<Int>) -> String {
+    let out = ""
+    let last = widths.len() - 1
+    let j = 0
+    while j < widths.len() {
+        if j > 0 {
+            out = out.concat("  ")
+        }
+        let cell = _cell(cells, j)
+        if j == last {
+            out = out.concat(cell)
+        } else {
+            out = out.concat(_pad(cell, widths[j]))
+        }
+        j += 1
+    }
+    // A short row leaves a trailing separator before its empty last cell; drop
+    // it so no line carries trailing whitespace.
+    return out.trim_end()
+}
+
+fun _pad(s: String, width: Int) -> String {
+    let n = width - s.length()
+    if n <= 0 {
+        return s
+    }
+    return s.concat(" ".repeat(n))
+}
