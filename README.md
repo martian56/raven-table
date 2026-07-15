@@ -1,5 +1,7 @@
 # raven-table
 
+[![CI](https://github.com/martian56/raven-table/actions/workflows/ci.yml/badge.svg)](https://github.com/martian56/raven-table/actions/workflows/ci.yml)
+
 Renders rows as an aligned text table. Columns size themselves to their widest
 cell, the header is bold, and short rows are padded out. It uses raven-color for
 the bold header.
@@ -8,14 +10,14 @@ the bold header.
 
 ```toml
 [dependencies]
-"github.com/martian56/raven-table" = "0.1"
+"github.com/martian56/raven-table" = "v0.1.0"
 ```
 
 That pulls in raven-color as well.
 
 ## Usage
 
-```raven
+```rust
 import "github.com/martian56/raven-table" { Table }
 
 let t = Table.new(["Name", "Age", "City"])
@@ -36,7 +38,7 @@ Bob    25   Boston
 For a file or a pipe where you don't want the escape codes, build the table with
 `.plain()`:
 
-```raven
+```rust
 Table.new(["A", "B"]).plain()
 ```
 
