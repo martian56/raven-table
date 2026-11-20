@@ -1,6 +1,6 @@
-import std/string
-import std/test { assert_eq_str, assert_true }
-import "./lib" { Table }
+import std.string
+from std.test import assert_eq_str, assert_true
+from "./lib" import Table
 
 fun test_plain_render() {
     let t = Table.new(["Name", "Age"]).plain()

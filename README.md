@@ -18,7 +18,7 @@ That pulls in raven-color as well.
 ## Usage
 
 ```rust
-import "github.com/martian56/raven-table" { Table }
+from "github.com/martian56/raven-table" import Table
 
 let t = Table.new(["Name", "Age", "City"])
 t.row(["Alice", "30", "New York"])
