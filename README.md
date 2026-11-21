@@ -10,7 +10,7 @@ the bold header.
 
 ```toml
 [dependencies]
-"github.com/martian56/raven-table" = "v0.1.0"
+"github.com/martian56/raven-table" = "v0.2.0"
 ```
 
 That pulls in raven-color as well.
@@ -18,7 +18,7 @@ That pulls in raven-color as well.
 ## Usage
 
 ```rust
-import "github.com/martian56/raven-table" { Table }
+from "github.com/martian56/raven-table" import Table
 
 let t = Table.new(["Name", "Age", "City"])
 t.row(["Alice", "30", "New York"])
