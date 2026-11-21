@@ -27,7 +27,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: martian56/setup-raven@v1
         with:
-          raven-version: "3.0.0"
+          raven-version: "3.0.1"
       - run: rvpm fmt --check
       - run: rvpm build
       - run: rvpm test
